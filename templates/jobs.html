@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Listings</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+
+        <nav>
+            <a href="/">Return To Home</a>
+        </nav>  
+
+        <h1>Available Jobs</h1>
+        <p>Browse our job listings below:</p>
+
+        <form method="GET" action="/jobs">
+            <!-- Search form -->    
+            <input type="text" name="search" placeholder="Search jobs...">
+            
+            <!-- Job type filters -->
+            <label><input type="checkbox" name="job_type" value="Full-time"> Full-time</label>
+            <label><input type="checkbox" name="job_type" value="Internship"> Internship</label>
+            <label><input type="checkbox" name="job_type" value="Part-time"> Part-time</label>
+            
+            <!-- Location filter -->
+            <label for="location" class="ms-3">Location:</label>
+            <select name="location" id="location" style="width: 200px;">
+            <option value="" {% if not request.args.get('location') %}selected{% endif %}>All</option>
+            {% for loc in locations %}
+                <option value="{{ loc }}" {% if request.args.get('location') == loc %} selected{% endif %}>{{ loc }}</optio    n>
+            {% endfor %}
+            </select>
+
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        <!-- Refresh Button-->
+        <a href="/refresh" class="btn btn-primary">Refresh Jobs</a>
+        <p class="text-muted">Last updated: {{ last_updated }}</p>
+        
+        <!-- Job listings -->
+        {% if jobs %}
+            <p class="text-muted"> {{ jobs|length }} Available Jobs</p>
+            <div class="row"> 
+                {% for job in jobs %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ job.job_title }} </h5>
+                            <h5 class="card-company">{{ job.company }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ job.location }}</h6>
+                            <a href="{{ job.job_link }}" target="_blank" class="card-link">{{ job.job_title }}</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="alert alert-warning">No jobs found. Try adjusting your filters or check back later.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
